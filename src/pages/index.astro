@@ -1,0 +1,220 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Craft Image Gallery"
+  description="Craft is an simple image gallery that you can use either local or external image links"
+>
+  <div
+    x-data="imageGallery"
+    @image-gallery-next.window="imageGalleryNext()"
+    @image-gallery-prev.window="imageGalleryPrev()"
+    @keyup.right.window="imageGalleryNext();"
+    @keyup.left.window="imageGalleryPrev();"
+    class="h-full w-full select-none"
+  >
+    <div
+      class="ease animate-fade-in-view mx-auto max-w-6xl opacity-0 delay-300 duration-1000 select-none"
+      style="translate: none; rotate: none; scale: none; opacity: 1; transform: translate(0px, 0px);"
+    >
+      <ul
+        x-ref="gallery"
+        id="gallery"
+        class="grid grid-cols-2 gap-5 lg:grid-cols-5"
+      >
+        <template x-for="(image, index) in imageGallery">
+          <li>
+            <img
+              x-on:click="imageGalleryOpen"
+              :src="image.src"
+              :alt="image.alt"
+              :data-index="index+1"
+              class="aspect-[3/2] h-auto w-full cursor-zoom-in rounded bg-gray-200 object-cover select-none lg:aspect-[3/2] xl:aspect-[4/4] hover:grayscale-50  "
+            />
+          </li>
+        </template>
+      </ul>
+    </div>
+    <template x-teleport="body">
+      <div
+        x-show="imageGalleryOpened"
+        x-transition:enter="transition ease-in-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:leave="transition ease-in-in duration-300"
+        x-transition:leave-end="opacity-0"
+        @click="imageGalleryClose"
+        @keydown.window.escape="imageGalleryClose"
+        x-trap.inert.noscroll="imageGalleryOpened"
+        class="bg-opacity-50 fixed inset-0 z-[99] flex cursor-zoom-out items-center justify-center bg-stone-950 select-none"
+        x-cloak
+      >
+        <div
+          class="relative flex h-full w-auto items-center justify-center xl:w-4/5"
+        >
+          <div
+            @click="$event.stopPropagation(); $dispatch('image-gallery-prev')"
+            class="absolute left-0 flex h-14 w-14 translate-x-10 cursor-pointer items-center justify-center rounded-full bg-rose-900 text-white hover:bg-rose-700 xl:-translate-x-24 2xl:-translate-x-32"
+          >
+            <svg
+              class="h-6 w-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              ><path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15.75 19.5L8.25 12l7.5-7.5"></path></svg
+            >
+          </div>
+          <img
+            x-show="imageGalleryOpened"
+            x-transition:enter="transition ease-in-out duration-300"
+            x-transition:enter-start="opacity-0 transform scale-50"
+            x-transition:leave="transition ease-in-in duration-300"
+            x-transition:leave-end="opacity-0 transform scale-50"
+            class="h-full w-full cursor-zoom-out object-contain object-center select-none"
+            :src="imageGalleryActiveUrl"
+            alt=""
+            style="display: none;"
+          />
+          <div
+            @click="$event.stopPropagation(); $dispatch('image-gallery-next');"
+            class="absolute right-0 flex h-14 w-14 -translate-x-10 cursor-pointer items-center justify-center rounded-full bg-rose-900 text-white hover:bg-rose-700 xl:translate-x-24 2xl:translate-x-32"
+          >
+            <svg
+              class="h-6 w-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              ><path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8.25 4.5l7.5 7.5-7.5 7.5"></path></svg
+            >
+          </div>
+        </div>
+      </div>
+    </template>
+  </div>
+</BaseLayout>
+
+<script>
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('imageGallery', () => ({
+      imageGalleryOpened: false,
+      imageGalleryActiveUrl: null,
+      imageGalleryImageIndex: null,
+      imageGallery: [
+        {
+          src: 'https://plus.unsplash.com/premium_photo-1756181211629-a024a0154173?q=80&w=1496&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          alt: 'Tall apartment buildings with many windows and balconies.',
+        },
+        {
+          src: 'https://images.unsplash.com/photo-1756151224665-eba765e8c3b5?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          alt: 'Starry night sky over a calm mountain lake',
+        },
+        {
+          src: 'https://images.unsplash.com/photo-1754922493956-364a7623a016?q=80&w=1375&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          alt: 'Snow covered landscape with frozen water',
+        },
+        {
+          src: 'https://images.unsplash.com/photo-1755097100741-2dd79bfce378?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          alt: 'Surfer walking on a misty beach with surfboard',
+        },
+        {
+          src: 'https://images.unsplash.com/photo-1755162310441-cce995fd036b?q=80&w=1465&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          alt: 'Two sailboats on calm ocean water at dusk',
+        },
+        {
+          src: 'gallery/Abstract-white-wavy-background-with-soft-shadows.jpeg',
+          alt: 'Abstract white wavy background with soft shadows',
+        },
+        {
+          src: 'gallery/Laptop-camera-and-external-drive-on-sleeping-bag.jpeg',
+          alt: 'Laptop camera and external drive on sleeping bag',
+        },
+        {
+          src: 'gallery/Man-with-laptop-and-woman-playing-cello.jpeg',
+          alt: 'Man with laptop and woman playing cello',
+        },
+        {
+          src: 'gallery/Modern-building-with-a-no-entry-sign-and-cones.jpeg',
+          alt: 'Modern building with a no entry sign and cones',
+        },
+        {
+          src: 'gallery/People-cycling-on-a-road-between-modern-buildings.jpeg',
+          alt: 'People cycling on a road between modern buildings',
+        },
+
+        {
+          src: 'gallery/People-relaxing-by-a-river-with-a-stone-bridge.jpeg',
+          alt: 'People relaxing by a river with a stone bridge',
+        },
+        {
+          src: 'gallery/Person-looking-at-art-in-a-gallery-with-a-smartphone.jpeg',
+          alt: 'Person looking at art in a gallery with a smartphone',
+        },
+
+        {
+          src: 'gallery/Railway-booking-office-exit-to-bus-station-sign.jpeg',
+          alt: 'Railway booking office exit to bus station sign',
+        },
+
+        {
+          src: 'gallery/River-flowing-past-old-buildings-and-lush-greenery.jpeg',
+          alt: 'River flowing past old buildings and lush greenery',
+        },
+
+        {
+          src: 'gallery/Rugged-coastal-rock-formations-with-waves-crashing.jpeg',
+          alt: 'Rugged coastal rock formations with waves crashing',
+        },
+
+        {
+          src: 'gallery/Scattered-garlic-cloves-and-peels-on-a-textured-surface.jpeg',
+          alt: 'Scattered garlic cloves and peels on a textured surface',
+        },
+
+        {
+          src: 'gallery/Single-tree-in-a-field-with-light-rays.jpeg',
+          alt: 'Single tree in a field with light rays',
+        },
+
+        {
+          src: 'gallery/View-through-a-cave-opening-to-a-rocky-beach-and-ocean.jpeg',
+          alt: 'View through a cave opening to a rocky beach and ocean',
+        },
+      ],
+      imageGalleryOpen(event) {
+        this.imageGalleryImageIndex = event.target.dataset.index
+        this.imageGalleryActiveUrl = event.target.src
+        this.imageGalleryOpened = true
+      },
+      imageGalleryClose() {
+        this.imageGalleryOpened = false
+        setTimeout(() => (this.imageGalleryActiveUrl = null), 300)
+      },
+      imageGalleryNext() {
+        this.imageGalleryImageIndex =
+          this.imageGalleryImageIndex == this.imageGallery.length
+            ? 1
+            : parseInt(this.imageGalleryImageIndex) + 1
+        this.imageGalleryActiveUrl = this.$refs.gallery.querySelector(
+          "[data-index='" + this.imageGalleryImageIndex + "']",
+        ).src
+      },
+      imageGalleryPrev() {
+        this.imageGalleryImageIndex = this.imageGalleryImageIndex == 1
+            ? this.imageGallery.length: parseInt(this.imageGalleryImageIndex) - 1
+        this.imageGalleryActiveUrl = this.$refs.gallery.querySelector(
+          "[data-index='" + this.imageGalleryImageIndex + "']",
+        ).src
+      },
+    }))
+  })
+</script>
