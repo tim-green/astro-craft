@@ -1,0 +1,13 @@
+{
+  "name": "Astro Craft",
+  "version": "1.0.0",
+  "author": "Tim Green",
+  "private": true,
+  "description": "A simple image gallery",
+  "scripts": {
+    "build": "astro build",
+    "dev": "astro dev",
+    "preview": "astro preview",
+    "start": "astro dev"
+  },
+    "astro": "^5.13.4",
